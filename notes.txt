@@ -1,0 +1,15 @@
+Blink - I do not have a led
+Pull up/down resistor explained in my notes. They can be used to manipulate GPIOs which are the pins.
+This is used in the Button excercise.
+
+Wifi/WifiSmartConfig - requires to download an application with which you send smart config packets
+to configure the arduino with your mobile phone.
+
+Wifi.WifiScan - returns the number of wifi networks
+Wifi.SSID(n) - returns the SSID of the nth wifi network. For all wifi commands:
+https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/station-class.html
+
+WifiClient - used to create a tcp connection and send requests and read data.
+WifiMulti - connect to multiple access points instead of one.
+
+HTTP Client - easier way to send http requests

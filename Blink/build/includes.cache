@@ -1,0 +1,17 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "/home/nikolay/snap/arduino/50/.arduino15/packages/esp32/hardware/esp32/1.0.5/cores/esp32"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "/home/nikolay/snap/arduino/50/.arduino15/packages/esp32/hardware/esp32/1.0.5/variants/doitESP32devkitV1"
+  },
+  {
+    "Sourcefile": "/home/nikolay/sketch_mar09a/build/sketch/sketch_mar09a.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]
