@@ -1,26 +1,22 @@
 #include <ESP32Servo.h>
 
 Servo servo;
+const int entranceButtonPin = 15;
 
 void setup() {
-  servo.attach(22);
-  
+    pinMode(entranceButtonPin, INPUT);
+
+    servo.attach(22);
+    servo.write(90);
+
+    Serial.begin(115200);
 }
 
 void loop() {
-  servo.write(0);
-  delay(500);
-  delay(10000);
-  servo.write(90);
-  delay(500);
-  delay(10000);
-  servo.write(180);
-  delay(500);
-  delay(10000);
-  servo.write(90);
-  delay(500);
-  delay(10000);
-  servo.write(0);
-  delay(500);
-  delay(10000);
+    int stateButton = digitalRead(entranceButtonPin);
+    if(stateButton == 1) {
+        servo.write(0);
+        delay(3000);
+        servo.write(90);
+    }
 }
