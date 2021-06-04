@@ -6,7 +6,18 @@ void setup() {
 }
 
 void loop() {
-   int ldrStatus = analogRead(lightSensorPin);
-   
-   Serial.println(String("Light sensor: ") + String(ldrStatus));
+    int ldrStatus = analogRead(lightSensorPin);
+    int first = analogRead(lightSensorPin);
+    int last;
+
+    delay(100);
+    last = analogRead(lightSensorPin);
+
+    if(first - last > 500) {
+        Serial.println("Object present");
+    } else if(last - first > 500) {
+        Serial.println("Object removed");
+    }
+    
+    Serial.println(String("Light sensor: ") + String(ldrStatus));
 }
