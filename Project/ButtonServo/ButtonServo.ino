@@ -3,9 +3,20 @@
 #include <Wire.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
+#include <NeoPixelBus.h>
 
 LiquidCrystal_PCF8574 lcd(0x27); // set the LCD address to 0x27 for a 16 chars and 2 line display
 Servo servo;
+
+const uint16_t PixelCount = 6;
+const uint8_t PixelPin = 13;
+
+#define colorSaturation 60
+
+RgbColor red(colorSaturation, 0, 0);
+RgbColor green(0, colorSaturation, 0);
+
+NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, PixelPin);
 
 const int entranceButtonPin = 15;
 const int lcdData = 18;
@@ -45,7 +56,7 @@ bool parkingLotTaken[parkingCapacity];
 int freeParkingSpaces = parkingCapacity;
 
 //4965 is the max output of the sensor
-int lastIterationLight[parkingCapacity] = {4965, 4965};
+int lastIterationLight[parkingCapacity] = {0, 0};
 
 // Replace with your network credentials
 const char* ssid = "<ssid>";
@@ -63,33 +74,8 @@ void setupServo();
 void setupLCD();
 void setupThingsBoard();
 void printLCDHelloMessage();
-
-
-void checkObjectPresent() {
-    Serial.println("Checking to see if a car has parked infront of sensor");
-
-    int newLight, oldLight;
-    
-    for (int i = 0; i < parkingCapacity; ++i) {
-        Serial.println(String("Reading pin: ") + String(lightSensorPins[i]));
-        newLight = analogRead(lightSensorPins[i]);
-        oldLight = lastIterationLight[i];
-
-        Serial.println(oldLight);
-        Serial.println(newLight);
-        if (oldLight - newLight > lightDifference) {
-            parkingLotTaken[i] = true;
-        } else if (newLight - oldLight > lightDifference) {
-            parkingLotTaken[i] = false;
-        }
-
-        lastIterationLight[i] = newLight;
-    }
-
-    Serial.println("-----------------");
-    Serial.println(parkingLotTaken[0]);
-    Serial.println("-----------------");
-}
+void checkObjectPresent();
+void setupNeopixel();
 
 void setupPinsAndSerial() {
     Serial.begin(115200);
@@ -102,12 +88,12 @@ void setupPinsAndSerial() {
     attachInterrupt(digitalPinToInterrupt(entranceButtonPin), setEntranceInterrupt, FALLING);
 }
 
-
 void setup() {
     setupPinsAndSerial();
     setupServo();
     setupLCD();
     setupThingsBoard();
+    setupNeopixel();
 
     for (int i = 0; i < parkingCapacity; ++i) {
         pinMode(lightSensorPins[i], INPUT);

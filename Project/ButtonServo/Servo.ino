@@ -1,10 +1,17 @@
 void setEntranceInterrupt() {
-    entranceInteruptTriggered = true;
+    if(!entranceInteruptTriggered) {
+        entranceInteruptTriggered = true;
+        strip.SetPixelColor(5, green);
+        strip.Show();
+    }
 }
 
 void openEntrance() {
     Serial.println("Opening servo");
+    strip.SetPixelColor(5, red);
+    strip.Show();
     if (freeParkingSpaces == 0) {
+        printLCDParkingLotFullMessage();
         return;
     }
 

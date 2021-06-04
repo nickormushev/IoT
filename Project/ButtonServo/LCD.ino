@@ -23,3 +23,16 @@ void printLCDHelloMessage() {
     lcd.print(" Welcome!");
 }
 
+void printLCDParkingLotFullMessage() {
+    Serial.println("Printing parking lot full");
+    lcd.setBacklight(255);
+    lcd.home();
+    lcd.clear();
+    lcd.print(" Parking lot is");
+    lcd.setCursor(0, 1);
+    lcd.print(" full!");
+    delay(4000);
+    lcd.setBacklight(0);
+    lcd.clear();
+}
+
