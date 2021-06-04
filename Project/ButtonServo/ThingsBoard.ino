@@ -52,7 +52,7 @@ void loopThingsBoard() {
     String json = "{\"freeParkingSpaces\":" + String(freeParkingSpaces) + "}"; 
     Serial.println(json);
 
-    client.print(String("POST ") + "https://thingsboard.cloud/api/v1/<access token>/telemetry HTTP/1.1\r\n"
+    client.print(String("POST ") + "https://thingsboard.cloud/api/v1/rT3FAKTKV5jjzuXN/telemetry HTTP/1.1\r\n"
             + "Host: " + https_server + "\r\n" 
             + "Connection: close\r\n"
             + "Content-Length: " + json.length() + "\r\n"

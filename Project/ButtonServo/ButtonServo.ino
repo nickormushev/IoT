@@ -41,8 +41,8 @@ int freeParkingSpaces = 4;
 /*https://:443/api/v1/rT3FAKTKV5jjzuXN/telemetry */
 
 // Replace with your network credentials
-const char* ssid = "<ssid>";
-const char* password = "<password>";
+const char* ssid = "TP-LINK_0B52A8";
+const char* password = "12345678999";
 
 WiFiClientSecure client;
 
