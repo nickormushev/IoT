@@ -11,6 +11,11 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
+void setupThingsBoard() {
+    setup_wifi();
+    client.setCACert(test_root_ca);
+}
+
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message received on topic [" + String(topic) + "]");
 

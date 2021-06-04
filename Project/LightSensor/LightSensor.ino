@@ -8,10 +8,9 @@ void setup() {
 void loop() {
     int ldrStatus = analogRead(lightSensorPin);
     int first = analogRead(lightSensorPin);
-    int last;
 
     delay(100);
-    last = analogRead(lightSensorPin);
+    int last = analogRead(lightSensorPin);
 
     if(first - last > 500) {
         Serial.println("Object present");

@@ -35,14 +35,21 @@ const char* test_root_ca= \
 
 /*const char* https_server = "tb.genevski.com";*/
 const char* https_server = "thingsboard.cloud";
-bool interuptTriggered = false;
-int freeParkingSpaces = 4;
+bool entranceInteruptTriggered = false;
 
-/*https://:443/api/v1/rT3FAKTKV5jjzuXN/telemetry */
+const int lightDifference = 100; // the light difference is used to determine if an object is present
+const int parkingCapacity = 2;
+const int lightSensorPins[parkingCapacity] = {32, 36};
+
+bool parkingLotTaken[parkingCapacity];
+int freeParkingSpaces = parkingCapacity;
+
+//4965 is the max output of the sensor
+int lastIterationLight[parkingCapacity] = {4965, 4965};
 
 // Replace with your network credentials
-const char* ssid = "TP-LINK_0B52A8";
-const char* password = "12345678999";
+const char* ssid = "<ssid>";
+const char* password = "<password>";
 
 WiFiClientSecure client;
 
@@ -50,84 +57,74 @@ void setup_wifi();
 void callback(char* topic, byte* payload, unsigned int length);
 int reconnect();
 void loopThingsBoard();
+void setEntranceInterrupt();
+void openEntrance();
+void setupServo();
+void setupLCD();
+void setupThingsBoard();
+void printLCDHelloMessage();
 
 
-void setupLCD() {
-    Serial.println("Checking for LCD...");
+void checkObjectPresent() {
+    Serial.println("Checking to see if a car has parked infront of sensor");
 
-    Wire.begin(lcdData, lcdClock);
-    Wire.beginTransmission(0x27);
-    int error = Wire.endTransmission();
+    int newLight, oldLight;
+    
+    for (int i = 0; i < parkingCapacity; ++i) {
+        Serial.println(String("Reading pin: ") + String(lightSensorPins[i]));
+        newLight = analogRead(lightSensorPins[i]);
+        oldLight = lastIterationLight[i];
 
-    if (error == 0) {
-        Serial.println(": LCD found.");
-        lcd.begin(16, 2); // initialize the lcd
-    } else {
-        Serial.print("Error: ");
-        Serial.print(error);
-        Serial.println(": LCD not found.");
+        Serial.println(oldLight);
+        Serial.println(newLight);
+        if (oldLight - newLight > lightDifference) {
+            parkingLotTaken[i] = true;
+        } else if (newLight - oldLight > lightDifference) {
+            parkingLotTaken[i] = false;
+        }
+
+        lastIterationLight[i] = newLight;
     }
+
+    Serial.println("-----------------");
+    Serial.println(parkingLotTaken[0]);
+    Serial.println("-----------------");
 }
 
-void printLCDHelloMessage() {
-    Serial.println("Printing hello");
-    lcd.setBacklight(255);
-    lcd.home();
-    lcd.clear();
-    lcd.print(" Welcome!");
-}
-
-void openEntrance() {
-    freeParkingSpaces--;
-    servo.write(90);
-    printLCDHelloMessage();
-    delay(3000);
-    servo.write(180);
-    delay(2000);
-    lcd.setBacklight(0);
-    lcd.clear();
-}
-
-void setupServo() {
-    Serial.println("Setting up servo...");
-    servo.attach(22);
-    servo.write(180);
-}
-
-void setInterrupt() {
-    interuptTriggered = true;
-}
-
-void setupButtonsAndSerial() {
+void setupPinsAndSerial() {
     Serial.begin(115200);
     while (!Serial);
     
-    Serial.println("Setting button pins to input...");
+    Serial.println("Setting pins to input...");
     pinMode(entranceButtonPin, INPUT);
-    attachInterrupt(digitalPinToInterrupt(entranceButtonPin), setInterrupt, FALLING);
+
+
+    attachInterrupt(digitalPinToInterrupt(entranceButtonPin), setEntranceInterrupt, FALLING);
 }
 
-void setupThingsBoard() {
-    randomSeed(analogRead(0));
-    
-    setup_wifi();
-    
-    client.setCACert(test_root_ca);
-}
 
 void setup() {
-    setupButtonsAndSerial();
+    setupPinsAndSerial();
     setupServo();
     setupLCD();
     setupThingsBoard();
+
+    for (int i = 0; i < parkingCapacity; ++i) {
+        pinMode(lightSensorPins[i], INPUT);
+    }
+
+    for (int i = 0; i < parkingCapacity; ++i) {
+        parkingLotTaken[i] = false;
+    }
 }
 
 void loop() {
-    /*int stateButton = digitalRead(entranceButtonPin);*/
-    if(interuptTriggered) {
+    if(entranceInteruptTriggered) {
         openEntrance();
-        interuptTriggered = false;
+        entranceInteruptTriggered = false;
     }
 
+    checkObjectPresent();
     loopThingsBoard();
 }
+
