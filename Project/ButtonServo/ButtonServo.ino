@@ -49,25 +49,24 @@ const char* test_root_ca= \
      "Ob8VZRzI9neWagqNdwvYkQsEjgfbKbYK7p2CNTUQ\n" \
      "-----END CERTIFICATE-----\n";
 
-/*const char* https_server = "tb.genevski.com";*/
-const char* https_server = "thingsboard.cloud";
+const char* https_server = "tb.genevski.com";
+/*const char* https_server = "thingsboard.cloud";*/
 bool entranceInteruptTriggered = false;
 bool exitInteruptTriggered = false;
 
 const int lightDifference = 100; // the light difference is used to determine if an object is present
 const int parkingCapacity = 2;
-const int lightSensorPins[parkingCapacity] = {32, 36};
+const int lightSensorPins[parkingCapacity] = {32, 35};
 
 const int entranceLightDiode = 5;
 const int exitLightDiode = 4;
 
-bool parkingLotTaken[parkingCapacity];
 int freeParkingSpaces = parkingCapacity;
 int lastIterationLight[parkingCapacity] = {0, 0};
 
 // Replace with your network credentials
-const char* ssid = "TP-LINK_0B52A8";
-const char* password = "12345678999";
+const char* ssid = "<ssid>";
+const char* password = "<password>";
 
 WiFiClientSecure client;
 
@@ -107,11 +106,6 @@ void setup() {
     setupLCD();
     setupThingsBoard();
     setupNeopixel();
-
-
-    for (int i = 0; i < parkingCapacity; ++i) {
-        parkingLotTaken[i] = false;
-    }
 }
 
 void loop() {

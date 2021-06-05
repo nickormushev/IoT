@@ -57,7 +57,7 @@ void loopThingsBoard() {
     String json = "{\"freeParkingSpaces\":" + String(freeParkingSpaces) + "}"; 
     Serial.println(json);
 
-    client.print(String("POST ") + "https://thingsboard.cloud/api/v1/rT3FAKTKV5jjzuXN/telemetry HTTP/1.1\r\n"
+    client.print(String("POST ") + "https://tb.genevski.com:443/api/v1/rT3FAKTKV5jjzuX/telemetry HTTP/1.1\r\n"
             + "Host: " + https_server + "\r\n" 
             + "Connection: close\r\n"
             + "Content-Length: " + json.length() + "\r\n"
@@ -84,7 +84,6 @@ void loopThingsBoard() {
     Serial.println("--------------");
   }
 
-  /*client.stop();*/
   delay(2000);
 }
 

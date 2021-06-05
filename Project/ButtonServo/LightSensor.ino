@@ -24,10 +24,8 @@ void checkObjectPresent() {
 
         if (oldLight - newLight > lightDifference) {
             strip.SetPixelColor(i, red);
-            /*parkingLotTaken[i] = true;*/
             strip.Show();
         } else if (newLight - oldLight > lightDifference) {
-            /*parkingLotTaken[i] = false;*/
             strip.SetPixelColor(i, green);
             strip.Show();
         }
