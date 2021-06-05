@@ -1,4 +1,4 @@
-const int lightSensorPin = 4;
+const int lightSensorPin = 36;
 
 void setup() {
   Serial.begin(115200);

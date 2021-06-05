@@ -1,25 +1,53 @@
 void setEntranceInterrupt() {
     if(!entranceInteruptTriggered) {
         entranceInteruptTriggered = true;
-        strip.SetPixelColor(5, green);
+        strip.SetPixelColor(entranceLightDiode, green);
+        strip.Show();
+    }
+}
+
+void setExitInterrupt() {
+    if(!exitInteruptTriggered) {
+        exitInteruptTriggered = true;
+        strip.SetPixelColor(exitLightDiode, green);
         strip.Show();
     }
 }
 
 void openEntrance() {
-    Serial.println("Opening servo");
-    strip.SetPixelColor(5, red);
+    Serial.println("Opening entrance servo");
+    strip.SetPixelColor(entranceLightDiode, red);
     strip.Show();
+
     if (freeParkingSpaces == 0) {
         printLCDParkingLotFullMessage();
         return;
     }
 
     freeParkingSpaces--;
-    servo.write(90);
-    printLCDHelloMessage();
+    entranceServo.write(90);
+    printLCDMessage("Welcome!");
     delay(3000);
-    servo.write(180);
+    entranceServo.write(180);
+    delay(2000);
+    lcd.setBacklight(0);
+    lcd.clear();
+}
+
+//A little bit of code duplication but I am too lazy to fix it
+void openExit() {
+    Serial.println("Opening exit servo");
+    strip.SetPixelColor(exitLightDiode, red);
+    strip.Show();
+
+    if (freeParkingSpaces < parkingCapacity) {
+        freeParkingSpaces++;
+    }
+
+    exitServo.write(90);
+    printLCDMessage("Goodbye!");
+    delay(3000);
+    exitServo.write(180);
     delay(2000);
     lcd.setBacklight(0);
     lcd.clear();
@@ -27,6 +55,8 @@ void openEntrance() {
 
 void setupServo() {
     Serial.println("Setting up servo...");
-    servo.attach(22);
-    servo.write(180);
+    entranceServo.attach(entranceServoPin);
+    exitServo.attach(exitServoPin);
+    entranceServo.write(180);
+    exitServo.write(180);
 }

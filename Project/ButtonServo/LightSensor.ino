@@ -7,7 +7,8 @@ void setupNeopixel() {
         strip.SetPixelColor(i, green);
     }
 
-    strip.SetPixelColor(5, red);
+    strip.SetPixelColor(exitLightDiode, red);
+    strip.SetPixelColor(entranceLightDiode, red);
     strip.Show();
 }
 

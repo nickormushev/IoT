@@ -6,7 +6,11 @@
 #include <NeoPixelBus.h>
 
 LiquidCrystal_PCF8574 lcd(0x27); // set the LCD address to 0x27 for a 16 chars and 2 line display
-Servo servo;
+Servo entranceServo;
+Servo exitServo;
+
+const int entranceServoPin = 22;
+const int exitServoPin = 12;
 
 const uint16_t PixelCount = 6;
 const uint8_t PixelPin = 13;
@@ -19,6 +23,7 @@ RgbColor green(0, colorSaturation, 0);
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, PixelPin);
 
 const int entranceButtonPin = 15;
+const int exitButtonPin = 2;
 const int lcdData = 18;
 const int lcdClock = 19;
 
@@ -47,20 +52,22 @@ const char* test_root_ca= \
 /*const char* https_server = "tb.genevski.com";*/
 const char* https_server = "thingsboard.cloud";
 bool entranceInteruptTriggered = false;
+bool exitInteruptTriggered = false;
 
 const int lightDifference = 100; // the light difference is used to determine if an object is present
 const int parkingCapacity = 2;
 const int lightSensorPins[parkingCapacity] = {32, 36};
 
+const int entranceLightDiode = 5;
+const int exitLightDiode = 4;
+
 bool parkingLotTaken[parkingCapacity];
 int freeParkingSpaces = parkingCapacity;
-
-//4965 is the max output of the sensor
 int lastIterationLight[parkingCapacity] = {0, 0};
 
 // Replace with your network credentials
-const char* ssid = "<ssid>";
-const char* password = "<password>";
+const char* ssid = "TP-LINK_0B52A8";
+const char* password = "12345678999";
 
 WiFiClientSecure client;
 
@@ -76,6 +83,8 @@ void setupThingsBoard();
 void printLCDHelloMessage();
 void checkObjectPresent();
 void setupNeopixel();
+void openExit();
+void setExitInterrupt();
 
 void setupPinsAndSerial() {
     Serial.begin(115200);
@@ -84,8 +93,12 @@ void setupPinsAndSerial() {
     Serial.println("Setting pins to input...");
     pinMode(entranceButtonPin, INPUT);
 
+    for (int i = 0; i < parkingCapacity; ++i) {
+        pinMode(lightSensorPins[i], INPUT);
+    }
 
     attachInterrupt(digitalPinToInterrupt(entranceButtonPin), setEntranceInterrupt, FALLING);
+    attachInterrupt(digitalPinToInterrupt(exitButtonPin), setExitInterrupt, FALLING);
 }
 
 void setup() {
@@ -95,9 +108,6 @@ void setup() {
     setupThingsBoard();
     setupNeopixel();
 
-    for (int i = 0; i < parkingCapacity; ++i) {
-        pinMode(lightSensorPins[i], INPUT);
-    }
 
     for (int i = 0; i < parkingCapacity; ++i) {
         parkingLotTaken[i] = false;
@@ -108,6 +118,11 @@ void loop() {
     if(entranceInteruptTriggered) {
         openEntrance();
         entranceInteruptTriggered = false;
+    }
+
+    if(exitInteruptTriggered) {
+        openExit();
+        exitInteruptTriggered = false;
     }
 
     checkObjectPresent();

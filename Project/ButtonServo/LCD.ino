@@ -15,12 +15,12 @@ void setupLCD() {
     }
 }
 
-void printLCDHelloMessage() {
+void printLCDMessage(String message) {
     Serial.println("Printing hello");
     lcd.setBacklight(255);
     lcd.home();
     lcd.clear();
-    lcd.print(" Welcome!");
+    lcd.print(" " + message);
 }
 
 void printLCDParkingLotFullMessage() {
